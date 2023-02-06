@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@blueprintjs/core": "^4.15.1",
+    "firebase": "^9.17.1",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
+    "sass": "^1.58.0",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
