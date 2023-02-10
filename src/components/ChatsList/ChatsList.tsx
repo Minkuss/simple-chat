@@ -1,7 +1,12 @@
 import { Card } from "@blueprintjs/core";
 import { FC } from "react";
+import { ChatListButton } from "../../ui-components";
 import "./ChatsList.scss";
 
 export const ChatsList: FC = () => {
-  return <Card className="chats-list">Chat List</Card>;
+  return (
+    <div className="chats-list">
+      <ChatListButton />
+    </div>
+  );
 };

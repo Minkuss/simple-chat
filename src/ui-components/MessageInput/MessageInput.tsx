@@ -1,6 +1,6 @@
 import { InputGroup } from "@blueprintjs/core";
 import { FC } from "react";
-import "./MassageInput.scss";
+import "./MessageInput.scss";
 
 export const MassageInput: FC = () => {
   return (

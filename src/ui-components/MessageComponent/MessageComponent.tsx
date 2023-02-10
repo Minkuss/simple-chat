@@ -1,7 +1,7 @@
 import { Card } from "@blueprintjs/core";
 import { FC } from "react";
 import { IMassage } from "../../types";
-import "./MassageComponent.scss";
+import "./MessageComponent.scss";
 
 interface IMassageComponent {
   massage: IMassage;

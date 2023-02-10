@@ -1,6 +1,6 @@
 import { Button } from "@blueprintjs/core";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import "./LoginPage.scss";

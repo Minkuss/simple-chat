@@ -1,0 +1,15 @@
+.chat-list-box {
+  & .chat-list-box_user-photo {
+    float: left;
+    border-radius: 50px;
+  }
+  & .chat-list-box_date {
+    float: right
+  }
+  &:hover {
+    text-decoration: none;
+    color: white;
+  }
+  color: white;
+  width: 100%;
+}
