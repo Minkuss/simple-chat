@@ -16,15 +16,13 @@ export const ChatListButton: FC = () => {
             auth.currentUser?.photoURL != null ? auth.currentUser?.photoURL : ""
           }
           alt="User_photo"
-          width={"50px"}
+          width={"60px"}
         />
-        <div
-          style={{ display: "flex", flexDirection: "column" }}
-          className="chat-list-box_spans"
-        >
+        <div className="chat-list-box_spans">
           <span className="chat-list-box_header">Name</span>
-          <span className="chat-list-box_msg">Hello</span>
+          <span className="chat-list-box_msg">Message</span>
         </div>
+        <div className="grow"></div>
         <span className="chat-list-box_date">date</span>
       </div>
     </NavLink>

@@ -1,15 +1,28 @@
 .chat-list-box {
-  & .chat-list-box_user-photo {
-    float: left;
+  display: flex;
+  color: white;
+  &:hover {
+    background-color: rgba(38, 47, 59, 1);
+  }
+  &:active {
+    background-color: rgba(55, 61, 70, 1);
+  }
+  .chat-list-box_user-photo {
     border-radius: 50px;
   }
-  & .chat-list-box_date {
-    float: right
+  .chat-list-box_spans {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    .chat-list-box_msg {
+      opacity: 0.5;
+    }
   }
-  &:hover {
-    text-decoration: none;
-    color: white;
+  .grow {
+    flex-grow: 1;
   }
-  color: white;
-  width: 100%;
+  .chat-list-box_date {
+    align-self: center;
+    opacity: 0.5;
+  }
 }
