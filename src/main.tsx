@@ -7,6 +7,7 @@ import { CoreRouter } from "./core/router";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { AuthContext } from "./context/authContext";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDxCBGKipihjYwmMoWiPtr7fgevla-829E",
@@ -19,6 +20,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 const auth = getAuth(app);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

@@ -1,5 +1,7 @@
 export interface IUser {
   name: string;
+  email: string;
+  chats: IChat[];
 }
 
 export interface IChat {
