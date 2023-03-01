@@ -1,4 +1,3 @@
-import { Button } from "@blueprintjs/core";
 import { FC, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChatComponent, ChatsList } from "../../components";
@@ -12,6 +11,7 @@ export const MainPage: FC = () => {
   const auth = useContext(AuthContext).auth;
 
   useEffect(() => {
+    console.log(auth.currentUser);
     if (authStatus !== "unauthenticated") return;
     navigate("/");
   }, [authStatus, navigate]);

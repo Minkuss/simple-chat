@@ -12,8 +12,8 @@ export const LoginPage: FC = () => {
   const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
 
-  const getData = async (email: string) => {
-    const docRef = doc(db, "users", email != null ? email : "anon");
+  const getData = async (id: string) => {
+    const docRef = doc(db, "users", id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return docSnap.data();
@@ -22,11 +22,12 @@ export const LoginPage: FC = () => {
     }
   };
 
-  const setFirstData = async (email: string, name: string) => {
-    await setDoc(doc(db, "users", email != null ? email : "anon"), {
+  const setFirstData = async (email: string, name: string, id: string) => {
+    await setDoc(doc(db, "users", id), {
       email: email,
       name: name,
       chats: [],
+      id: id,
     });
   };
 
@@ -36,10 +37,10 @@ export const LoginPage: FC = () => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential != null ? credential.accessToken : {};
         const user = result.user;
-        const dataSnap = getData(user.email || "");
+        const dataSnap = getData(user.uid);
         dataSnap.then((value) => {
           if (value === undefined) {
-            setFirstData(user.email || "", user.displayName || "");
+            setFirstData(user.email || "", user.displayName || "", user.uid);
           }
         });
 

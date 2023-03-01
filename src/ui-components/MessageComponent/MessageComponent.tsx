@@ -19,5 +19,10 @@ export const MassageComponent: FC<IMassageComponent> = (props) => {
 };
 
 const defaultProps: Required<IMassageComponent> = {
-  massage: { content: "", status: "", date: "", sender: { name: "" } },
+  massage: {
+    content: "",
+    status: "",
+    date: "",
+    sender: { name: "", email: "", chats: [] },
+  },
 };
