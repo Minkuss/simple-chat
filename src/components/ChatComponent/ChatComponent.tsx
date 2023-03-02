@@ -10,13 +10,13 @@ const data: IMassage[] = [
     content: "Привет",
     status: "checked",
     date: "date",
-    sender: { name: "Nick" },
+    sender: { name: "Nick", email: "", chats: [] },
   },
   {
     content: "Пока",
     status: "checked",
     date: "date",
-    sender: { name: "Anton" },
+    sender: { name: "Anton", email: "", chats: [] },
   },
 ];
 

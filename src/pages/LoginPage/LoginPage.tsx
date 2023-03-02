@@ -22,12 +22,18 @@ export const LoginPage: FC = () => {
     }
   };
 
-  const setFirstData = async (email: string, name: string, id: string) => {
+  const setFirstData = async (
+    email: string,
+    name: string,
+    id: string,
+    photoURL: string
+  ) => {
     await setDoc(doc(db, "users", id), {
       email: email,
       name: name,
       chats: [],
       id: id,
+      photoUrl: photoURL,
     });
   };
 
@@ -40,7 +46,12 @@ export const LoginPage: FC = () => {
         const dataSnap = getData(user.uid);
         dataSnap.then((value) => {
           if (value === undefined) {
-            setFirstData(user.email || "", user.displayName || "", user.uid);
+            setFirstData(
+              user.email || "",
+              user.displayName || "",
+              user.uid,
+              user.photoURL || ""
+            );
           }
         });
 

@@ -11,7 +11,6 @@ export const MainPage: FC = () => {
   const auth = useContext(AuthContext).auth;
 
   useEffect(() => {
-    console.log(auth.currentUser);
     if (authStatus !== "unauthenticated") return;
     navigate("/");
   }, [authStatus, navigate]);
