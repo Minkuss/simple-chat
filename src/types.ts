@@ -2,11 +2,13 @@ export interface IUser {
   name: string;
   email: string;
   chats: IChat[];
+  id: string
 }
 
 export interface IChat {
   users: IUser[];
   massages: IMassage[]
+  id: string
 }
 
 export interface IMassage {
@@ -14,4 +16,5 @@ export interface IMassage {
   status: string;
   date: string;
   sender: IUser;
+  id: string
 }

@@ -5,11 +5,14 @@ import { AuthContext } from "../../context/authContext";
 import "./ChatListButton.scss";
 
 interface IChatListButton {
-  userData: DocumentData;
+  userData?: DocumentData;
 }
 
 export const ChatListButton: FC<IChatListButton> = (props) => {
-  const { userData }: IChatListButton = { ...defaultProps, ...props };
+  const { userData }: IChatListButton = {
+    ...defaultProps,
+    ...props,
+  };
 
   return (
     <NavLink style={{ textDecoration: "none" }} to={""}>

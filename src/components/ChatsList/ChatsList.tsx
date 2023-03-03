@@ -8,14 +8,19 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../context/authContext";
 import { db } from "../../main";
 import { ChatListButton, SearchComponent } from "../../ui-components";
 import "./ChatsList.scss";
 
 export const ChatsList: FC = () => {
+  const auth = useContext(AuthContext).auth;
+  const userID = auth.currentUser?.uid;
+
   const [searchText, setSearchText] = useState("");
   const [result, setResult] = useState<DocumentData[]>([]);
+  const [open, setOpen] = useState(false);
 
   const getData = useCallback(async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -26,6 +31,7 @@ export const ChatsList: FC = () => {
 
   useEffect(() => {
     if (searchText.length > 0) {
+      setOpen(true);
       dataSnap
         .then((value) => {
           setResult([]);
@@ -42,6 +48,7 @@ export const ChatsList: FC = () => {
         .catch((error) => console.log(error));
     } else {
       setResult([]);
+      setOpen(false);
     }
   }, [searchText]);
 
@@ -52,9 +59,17 @@ export const ChatsList: FC = () => {
           setSearchText(value);
         }}
       />
-      {result.map((el) => (
-        <ChatListButton key={el.id} userData={el} />
-      ))}
+      {open ? (
+        <>
+          {result.map((el) => (
+            <ChatListButton key={el.id} userData={el} />
+          ))}
+        </>
+      ) : (
+        <>
+          <ChatListButton />
+        </>
+      )}
     </div>
   );
 };
