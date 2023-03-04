@@ -29,7 +29,7 @@ export const ChatListButton: FC<IChatListButton> = (props) => {
           <span className="chat-list-box_msg">{userData.lastMassage}</span>
         </div>
         <div className="grow"></div>
-        <span className="chat-list-box_date">date</span>
+        <span className="chat-list-box_date">{userData.date}</span>
       </div>
     </NavLink>
   );

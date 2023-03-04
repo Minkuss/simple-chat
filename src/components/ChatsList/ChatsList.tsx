@@ -24,18 +24,6 @@ export const ChatsList: FC = () => {
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState<DocumentData[]>([]);
 
-  const getUserChatsData = useCallback(async () => {
-    const docRef = doc(db, "users", userID || "");
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return docSnap.data();
-    } else {
-      console.log("Error, no such document");
-    }
-  }, [userID]);
-
-  const userChatsData = getUserChatsData();
-
   const getData = useCallback(async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
     return querySnapshot;
@@ -67,20 +55,24 @@ export const ChatsList: FC = () => {
   }, [searchText]);
 
   useEffect(() => {
-    userChatsData.then((user) => {
-      user?.chats.map((el: DocumentData) => {
-        const newChats: DocumentData[] = [
-          ...userData,
-          {
-            photoUrl: el.interlocutor.photoUrl,
-            name: el.interlocutor.name,
-            lastMassage: el.massages[el.massages.length - 1].content,
-            id: el.id,
-          },
-        ];
-        setUserData(newChats);
+    if (userID !== undefined) {
+      onSnapshot(doc(db, "users", userID), (doc) => {
+        doc.data()?.chats.map(async (el: DocumentData) => {
+          const interlocutorData: any = await (await getDoc(el.bebrik)).data();
+          const newChats: DocumentData[] = [
+            ...userData,
+            {
+              photoUrl: interlocutorData.photoUrl,
+              name: interlocutorData.name,
+              lastMassage: el.massages[el.massages.length - 1].content,
+              id: el.id,
+              date: el.massages[el.massages.length - 1].date,
+            },
+          ];
+          setUserData(newChats);
+        });
       });
-    });
+    }
   }, [userID]);
 
   return (
