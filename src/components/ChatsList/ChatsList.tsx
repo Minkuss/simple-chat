@@ -5,6 +5,7 @@ import {
   DocumentData,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   where,
 } from "firebase/firestore";
@@ -21,6 +22,19 @@ export const ChatsList: FC = () => {
   const [searchText, setSearchText] = useState("");
   const [result, setResult] = useState<DocumentData[]>([]);
   const [open, setOpen] = useState(false);
+  const [userData, setUserData] = useState<DocumentData[]>([]);
+
+  const getUserChatsData = useCallback(async () => {
+    const docRef = doc(db, "users", userID || "");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    } else {
+      console.log("Error, no such document");
+    }
+  }, [userID]);
+
+  const userChatsData = getUserChatsData();
 
   const getData = useCallback(async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -52,6 +66,23 @@ export const ChatsList: FC = () => {
     }
   }, [searchText]);
 
+  useEffect(() => {
+    userChatsData.then((user) => {
+      user?.chats.map((el: DocumentData) => {
+        const newChats: DocumentData[] = [
+          ...userData,
+          {
+            photoUrl: el.interlocutor.photoUrl,
+            name: el.interlocutor.name,
+            lastMassage: el.massages[el.massages.length - 1].content,
+            id: el.id,
+          },
+        ];
+        setUserData(newChats);
+      });
+    });
+  }, [userID]);
+
   return (
     <div className="chats-list">
       <SearchComponent
@@ -67,7 +98,9 @@ export const ChatsList: FC = () => {
         </>
       ) : (
         <>
-          <ChatListButton />
+          {userData.map((chat) => (
+            <ChatListButton userData={chat} />
+          ))}
         </>
       )}
     </div>
