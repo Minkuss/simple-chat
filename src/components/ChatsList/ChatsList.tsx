@@ -58,7 +58,9 @@ export const ChatsList: FC = () => {
     if (userID !== undefined) {
       onSnapshot(doc(db, "users", userID), (doc) => {
         doc.data()?.chats.map(async (el: DocumentData) => {
-          const interlocutorData: any = await (await getDoc(el.bebrik)).data();
+          const interlocutorData: any = await (
+            await getDoc(el.interlocutor)
+          ).data();
           const newChats: DocumentData[] = [
             ...userData,
             {
