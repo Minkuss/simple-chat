@@ -23,6 +23,7 @@ export const ChatsList: FC = () => {
   const [result, setResult] = useState<DocumentData[]>([]);
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState<DocumentData[]>([]);
+  const [chatData, setChatData] = useState({});
 
   const getUsersData = useCallback(async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -62,25 +63,8 @@ export const ChatsList: FC = () => {
   }, [searchText]);
 
   useEffect(() => {
-    if (userID !== undefined) {
+    if (userID) {
       onSnapshot(doc(db, "users", userID), (doc) => {
-        // doc.data()?.chats.map(async (el: DocumentData) => {
-        //   const interlocutorData: any = await (
-        //     await getDoc(el.interlocutor)
-        //   ).data();
-        //   const newChats: DocumentData[] = [
-        //     ...userData,
-        //     {
-        //       photoUrl: interlocutorData.photoUrl,
-        //       name: interlocutorData.name,
-        //       lastMassage: el.massages[el.massages.length - 1].content,
-        //       chatID: el.id,
-        //       interlocutorID: interlocutorData.id,
-        //       date: el.massages[el.massages.length - 1].date,
-        //     },
-        //   ];
-        //   setUserData(newChats);
-        // });
         doc.data()?.chats.map(async (el: any) => {
           const chatData: any = (await getDoc(el)).data();
           const interlocutorData: any = await (
@@ -110,12 +94,32 @@ export const ChatsList: FC = () => {
     }
   }, [userID]);
 
-  const onSubmit = useCallback((interlocutorID: string) => {
-    const chatUsers = {
-      user: auth.currentUser?.uid,
-      interlocutor: interlocutorID,
-    };
-  }, []);
+  const onSubmit = useCallback(
+    (interlocutorID: string) => {
+      if (userID) {
+        onSnapshot(doc(db, "users", userID), (doc) => {
+          doc.data()?.chats.map(async (el: any) => {
+            const chatData: any = (await getDoc(el)).data();
+            const initiatorUser: any = await (
+              await getDoc(chatData.initiatorUser)
+            ).data();
+            const interlocutorUser: any = await (
+              await getDoc(chatData.interlocutorUser)
+            ).data();
+            const initialUserID = initiatorUser.id;
+            const interlocutorUserID = interlocutorUser.id;
+            if (
+              initialUserID === interlocutorID ||
+              interlocutorUserID === interlocutorID
+            ) {
+              setChatData(chatData);
+            }
+          });
+        });
+      }
+    },
+    [userID]
+  );
 
   return (
     <div className="chats-list">
