@@ -6,16 +6,17 @@ import "./ChatListButton.scss";
 
 interface IChatListButton {
   userData?: DocumentData;
+  onClick?: (value: any) => unknown;
 }
 
 export const ChatListButton: FC<IChatListButton> = (props) => {
-  const { userData }: IChatListButton = {
+  const { userData, onClick }: IChatListButton = {
     ...defaultProps,
     ...props,
   };
 
   return (
-    <NavLink style={{ textDecoration: "none" }} to={""}>
+    <NavLink onClick={onClick} style={{ textDecoration: "none" }} to={""}>
       <div className="chat-list-box">
         <img
           className="chat-list-box_user-photo"
@@ -37,4 +38,5 @@ export const ChatListButton: FC<IChatListButton> = (props) => {
 
 const defaultProps: Required<IChatListButton> = {
   userData: {},
+  onClick: () => {},
 };

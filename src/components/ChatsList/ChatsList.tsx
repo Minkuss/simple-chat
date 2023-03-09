@@ -24,17 +24,24 @@ export const ChatsList: FC = () => {
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState<DocumentData[]>([]);
 
-  const getData = useCallback(async () => {
+  const getUsersData = useCallback(async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
     return querySnapshot;
   }, []);
 
-  const dataSnap = getData();
+  const usersDataSnap = getUsersData();
+
+  const getChatsData = useCallback(async () => {
+    const querySnapshot = await getDocs(collection(db, "chats"));
+    return querySnapshot;
+  }, []);
+
+  const chatsDataSnap = getChatsData();
 
   useEffect(() => {
     if (searchText.length > 0) {
       setOpen(true);
-      dataSnap
+      usersDataSnap
         .then((value) => {
           setResult([]);
           const searchQuery = searchText.toLowerCase();
@@ -57,18 +64,44 @@ export const ChatsList: FC = () => {
   useEffect(() => {
     if (userID !== undefined) {
       onSnapshot(doc(db, "users", userID), (doc) => {
-        doc.data()?.chats.map(async (el: DocumentData) => {
+        // doc.data()?.chats.map(async (el: DocumentData) => {
+        //   const interlocutorData: any = await (
+        //     await getDoc(el.interlocutor)
+        //   ).data();
+        //   const newChats: DocumentData[] = [
+        //     ...userData,
+        //     {
+        //       photoUrl: interlocutorData.photoUrl,
+        //       name: interlocutorData.name,
+        //       lastMassage: el.massages[el.massages.length - 1].content,
+        //       chatID: el.id,
+        //       interlocutorID: interlocutorData.id,
+        //       date: el.massages[el.massages.length - 1].date,
+        //     },
+        //   ];
+        //   setUserData(newChats);
+        // });
+        doc.data()?.chats.map(async (el: any) => {
+          const chatData: any = (await getDoc(el)).data();
           const interlocutorData: any = await (
-            await getDoc(el.interlocutor)
+            await getDoc(chatData.interlocutorUser)
           ).data();
+          const lastMassageDate = new Date(
+            chatData.massages[chatData.massages.length - 1].date.toMillis()
+          );
           const newChats: DocumentData[] = [
             ...userData,
             {
               photoUrl: interlocutorData.photoUrl,
               name: interlocutorData.name,
-              lastMassage: el.massages[el.massages.length - 1].content,
-              id: el.id,
-              date: el.massages[el.massages.length - 1].date,
+              lastMassage:
+                chatData.massages[chatData.massages.length - 1].content,
+              chatID: chatData.id,
+              interlocutorID: interlocutorData.id,
+              date:
+                String(lastMassageDate.getHours()) +
+                ":" +
+                String(lastMassageDate.getMinutes()).padStart(2, "0"),
             },
           ];
           setUserData(newChats);
@@ -76,6 +109,13 @@ export const ChatsList: FC = () => {
       });
     }
   }, [userID]);
+
+  const onSubmit = useCallback((interlocutorID: string) => {
+    const chatUsers = {
+      user: auth.currentUser?.uid,
+      interlocutor: interlocutorID,
+    };
+  }, []);
 
   return (
     <div className="chats-list">
@@ -87,13 +127,21 @@ export const ChatsList: FC = () => {
       {open ? (
         <>
           {result.map((el) => (
-            <ChatListButton key={el.id} userData={el} />
+            <ChatListButton
+              onClick={() => onSubmit(el.id)}
+              key={el.id}
+              userData={el}
+            />
           ))}
         </>
       ) : (
         <>
           {userData.map((chat) => (
-            <ChatListButton userData={chat} />
+            <ChatListButton
+              key={chat.chatID}
+              onClick={() => onSubmit(chat.interlocutorID)}
+              userData={chat}
+            />
           ))}
         </>
       )}
