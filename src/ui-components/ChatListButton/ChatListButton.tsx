@@ -15,8 +15,10 @@ export const ChatListButton: FC<IChatListButton> = (props) => {
     ...props,
   };
 
+  const chatLink = `/main/chat/${userData.name}`;
+
   return (
-    <NavLink onClick={onClick} style={{ textDecoration: "none" }} to={""}>
+    <NavLink onClick={onClick} style={{ textDecoration: "none" }} to={chatLink}>
       <div className="chat-list-box">
         <img
           className="chat-list-box_user-photo"

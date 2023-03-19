@@ -1,5 +1,5 @@
 import { FC, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { ChatComponent, ChatsList } from "../../components";
 import { AuthContext } from "../../context/authContext";
 import { useAuthStatus } from "../../hooks/use-auth-status";
@@ -18,7 +18,10 @@ export const MainPage: FC = () => {
   return (
     <div className="main">
       <ChatsList />
-      <ChatComponent />
+      {/* <Routes>
+        <Route path="/main/chat/:username" element={<ChatComponent />} />
+      </Routes> */}
+      <Outlet />
     </div>
   );
 };

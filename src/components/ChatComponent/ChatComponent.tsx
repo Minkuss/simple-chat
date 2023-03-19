@@ -1,5 +1,6 @@
 import { Card } from "@blueprintjs/core";
 import { FC } from "react";
+import { useParams } from "react-router-dom";
 import { IMassage } from "../../types";
 import { MassageComponent, MassageInput } from "../../ui-components";
 import { ChatHeader } from "../../ui-components/ChatHeader/ChatHeader";
@@ -21,9 +22,11 @@ const data: IMassage[] = [
 ];
 
 export const ChatComponent: FC = () => {
+  const { username } = useParams();
+
   return (
     <div className="chat-component">
-      <ChatHeader />
+      <ChatHeader userName={username || ""} />
       {data.map((massage) => (
         <MassageComponent massage={massage} />
       ))}
