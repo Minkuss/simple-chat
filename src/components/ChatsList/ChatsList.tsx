@@ -10,6 +10,7 @@ import {
   where,
 } from "firebase/firestore";
 import { FC, useCallback, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import { db } from "../../main";
 import { ChatListButton, SearchComponent } from "../../ui-components";
@@ -23,7 +24,6 @@ export const ChatsList: FC = () => {
   const [result, setResult] = useState<DocumentData[]>([]);
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState<DocumentData[]>([]);
-  const [chatData, setChatData] = useState({});
 
   const getUsersData = useCallback(async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -48,7 +48,10 @@ export const ChatsList: FC = () => {
           const searchQuery = searchText.toLowerCase();
           value.forEach((doc) => {
             const name: string = doc.data().name.toLowerCase();
-            if (name.slice(0, searchQuery.length).indexOf(searchQuery) !== -1) {
+            if (
+              name.slice(0, searchQuery.length).indexOf(searchQuery) !== -1 &&
+              name !== auth.currentUser?.displayName?.toLowerCase()
+            ) {
               setResult((prev) => {
                 return [...prev, doc.data()];
               });
@@ -94,33 +97,6 @@ export const ChatsList: FC = () => {
     }
   }, [userID]);
 
-  const onSubmit = useCallback(
-    (interlocutorID: string) => {
-      if (userID) {
-        onSnapshot(doc(db, "users", userID), (doc) => {
-          doc.data()?.chats.map(async (el: any) => {
-            const chatData: any = (await getDoc(el)).data();
-            const initiatorUser: any = await (
-              await getDoc(chatData.initiatorUser)
-            ).data();
-            const interlocutorUser: any = await (
-              await getDoc(chatData.interlocutorUser)
-            ).data();
-            const initialUserID = initiatorUser.id;
-            const interlocutorUserID = interlocutorUser.id;
-            if (
-              initialUserID === interlocutorID ||
-              interlocutorUserID === interlocutorID
-            ) {
-              setChatData(chatData);
-            }
-          });
-        });
-      }
-    },
-    [userID]
-  );
-
   return (
     <div className="chats-list">
       <SearchComponent
@@ -131,21 +107,13 @@ export const ChatsList: FC = () => {
       {open ? (
         <>
           {result.map((el) => (
-            <ChatListButton
-              onClick={() => onSubmit(el.id)}
-              key={el.id}
-              userData={el}
-            />
+            <ChatListButton key={el.id} userData={el} />
           ))}
         </>
       ) : (
         <>
           {userData.map((chat) => (
-            <ChatListButton
-              key={chat.chatID}
-              onClick={() => onSubmit(chat.interlocutorID)}
-              userData={chat}
-            />
+            <ChatListButton key={chat.chatID} userData={chat} />
           ))}
         </>
       )}

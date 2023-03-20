@@ -14,7 +14,7 @@ export interface IChat {
 export interface IMassage {
   content: string;
   status: string;
-  date: string;
+  date: any;
   sender: IUser;
   id: string
 }

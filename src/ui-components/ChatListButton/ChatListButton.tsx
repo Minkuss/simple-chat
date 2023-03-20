@@ -1,24 +1,26 @@
 import { DocumentData } from "firebase/firestore";
-import { FC, useContext } from "react";
+import { FC, useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import "./ChatListButton.scss";
 
 interface IChatListButton {
   userData?: DocumentData;
-  onClick?: (value: any) => unknown;
 }
 
 export const ChatListButton: FC<IChatListButton> = (props) => {
-  const { userData, onClick }: IChatListButton = {
+  const { userData }: IChatListButton = {
     ...defaultProps,
     ...props,
   };
 
   const chatLink = `/main/chat/${userData.name}`;
-
   return (
-    <NavLink onClick={onClick} style={{ textDecoration: "none" }} to={chatLink}>
+    <NavLink
+      style={{ textDecoration: "none" }}
+      to={chatLink}
+      state={{ interlocutorID: userData.interlocutorID }}
+    >
       <div className="chat-list-box">
         <img
           className="chat-list-box_user-photo"
@@ -40,5 +42,4 @@ export const ChatListButton: FC<IChatListButton> = (props) => {
 
 const defaultProps: Required<IChatListButton> = {
   userData: {},
-  onClick: () => {},
 };

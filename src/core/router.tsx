@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { ChatComponent } from "../components";
+import { ChatComponent, EmptyChatComponent } from "../components";
 import { LoginPage } from "../pages/LoginPage";
 import { MainPage } from "../pages/MainPage";
 
@@ -11,6 +11,7 @@ export const CoreRouter: FC = () => {
         <Route path="/" element={<LoginPage />} />
         <Route path="/main" element={<MainPage />}>
           <Route path="chat/:username" element={<ChatComponent />} />
+          <Route path="/main" element={<EmptyChatComponent />} />
         </Route>
       </Routes>
     </BrowserRouter>
