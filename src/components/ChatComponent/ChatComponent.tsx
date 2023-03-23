@@ -3,6 +3,7 @@ import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { FC, useContext, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
+import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../main";
 import { IChat, IMassage } from "../../types";
 import { MassageComponent, MassageInput } from "../../ui-components";
@@ -10,8 +11,7 @@ import { ChatHeader } from "../../ui-components/ChatHeader/ChatHeader";
 import "./ChatComponent.scss";
 
 export const ChatComponent: FC = () => {
-  const auth = useContext(AuthContext).auth;
-  const userID = auth.currentUser?.uid;
+  const user = useAuth();
 
   const { username } = useParams();
   const location = useLocation();
@@ -19,10 +19,8 @@ export const ChatComponent: FC = () => {
   const [chatData, setChatData] = useState<IChat>();
 
   useEffect(() => {
-    console.log(interlocutorID);
-    console.log("userid " + userID);
-    if (userID) {
-      onSnapshot(doc(db, "users", userID), (doc) => {
+    if (user) {
+      onSnapshot(doc(db, "users", user.uid), (doc) => {
         doc.data()?.chats.map(async (el: any) => {
           const chatData: any = (await getDoc(el)).data();
           const initiatorUser: any = await (
@@ -42,7 +40,7 @@ export const ChatComponent: FC = () => {
         });
       });
     }
-  }, []);
+  }, [user]);
 
   return (
     <div className="chat-component">

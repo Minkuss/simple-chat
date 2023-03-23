@@ -11,7 +11,7 @@ interface IMassageComponent {
 export const MassageComponent: FC<IMassageComponent> = (props) => {
   const { massage }: IMassageComponent = { ...defaultProps, ...props };
   const massageDate = new Date(massage.date.toMillis());
-  const [sender, setSender] = useState<any>();
+  const [sender, setSender] = useState<IUser>();
 
   const getSender = useCallback(async () => {
     const sender: any = (await getDoc(massage.sender)).data();
@@ -24,7 +24,7 @@ export const MassageComponent: FC<IMassageComponent> = (props) => {
 
   return (
     <Card className="massage-card">
-      <span>{sender.name}</span>
+      <h1>{sender?.name}</h1>
       <span className="massage-card_content">{massage.content}</span>
       <span className="massage-card_date">
         {String(massageDate.getHours()) +
