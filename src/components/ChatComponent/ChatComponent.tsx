@@ -20,6 +20,7 @@ export const ChatComponent: FC = () => {
 
   useEffect(() => {
     console.log(interlocutorID);
+    console.log("userid " + userID);
     if (userID) {
       onSnapshot(doc(db, "users", userID), (doc) => {
         doc.data()?.chats.map(async (el: any) => {

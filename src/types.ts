@@ -1,3 +1,5 @@
+import { DocumentReference } from "firebase/firestore";
+
 export interface IUser {
   name: string;
   email: string;
@@ -15,6 +17,6 @@ export interface IMassage {
   content: string;
   status: string;
   date: any;
-  sender: IUser;
+  sender: DocumentReference<unknown>;
   id: string
 }
