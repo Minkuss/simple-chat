@@ -1,11 +1,17 @@
 .massage-card {
-  margin-top: 5px;
   margin-left: 30px;
   margin-right: 30px;
+  margin-top: 5px;
   display: flex;
+  min-width: 20%;
+  max-width: 50%;
   justify-content: space-between;
   .massage-card_content {
     color: black;
+    align-self: flex-start;
   }
-  .massage-card_date {color: black;}
+  .massage-card_date {
+    color: black;
+    align-self: flex-end;
+  }
 }

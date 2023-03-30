@@ -67,31 +67,50 @@ export const ChatsList: FC = () => {
 
   useEffect(() => {
     if (userID) {
-      onSnapshot(doc(db, "users", userID), (doc) => {
+      const doc2 = doc;
+      onSnapshot(doc2(db, "users", userID), (doc) => {
         doc.data()?.chats.map(async (el: any) => {
           const chatData: any = (await getDoc(el)).data();
-          const interlocutorData: any = await (
-            await getDoc(chatData.interlocutorUser)
-          ).data();
-          const lastMassageDate = new Date(
-            chatData.massages[chatData.massages.length - 1].date.toMillis()
-          );
-          const newChats: DocumentData[] = [
-            ...userData,
-            {
-              photoUrl: interlocutorData.photoUrl,
-              name: interlocutorData.name,
-              lastMassage:
-                chatData.massages[chatData.massages.length - 1].content,
-              chatID: chatData.id,
-              interlocutorID: interlocutorData.id,
-              date:
-                String(lastMassageDate.getHours()) +
-                ":" +
-                String(lastMassageDate.getMinutes()).padStart(2, "0"),
-            },
-          ];
-          setUserData(newChats);
+          onSnapshot(doc2(db, "chats", chatData.id), async (doc) => {
+            // subscribing to chatData changes
+            const chat: any = doc.data();
+            const interlocutorData: any = await (
+              await getDoc(chat.interlocutorUser)
+            ).data();
+            if (chat.massages.length !== 0) {
+              const lastMassageDate = new Date(
+                chat.massages[chat.massages.length - 1].date.toMillis()
+              );
+              const newChats: DocumentData[] = [
+                ...userData,
+                {
+                  photoUrl: interlocutorData.photoUrl,
+                  name: interlocutorData.name,
+                  lastMassage: chat.massages[chat.massages.length - 1].content,
+                  chatID: chat.id,
+                  interlocutorID: interlocutorData.id,
+                  date:
+                    String(lastMassageDate.getHours()) +
+                    ":" +
+                    String(lastMassageDate.getMinutes()).padStart(2, "0"),
+                },
+              ];
+              setUserData(newChats);
+            } else {
+              const newChats: DocumentData[] = [
+                ...userData,
+                {
+                  photoUrl: interlocutorData.photoUrl,
+                  name: interlocutorData.name,
+                  lastMassage: "",
+                  chatID: chat.id,
+                  interlocutorID: interlocutorData.id,
+                  date: "",
+                },
+              ];
+              setUserData(newChats);
+            }
+          });
         });
       });
     }

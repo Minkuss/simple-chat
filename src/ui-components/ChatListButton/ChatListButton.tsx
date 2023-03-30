@@ -21,21 +21,32 @@ export const ChatListButton: FC<IChatListButton> = (props) => {
       to={chatLink}
       state={{ interlocutorID: userData.interlocutorID }}
     >
-      <div className="chat-list-box">
-        <img
-          className="chat-list-box_user-photo"
-          src={userData.photoUrl}
-          alt="User_photo"
-          width={"60px"}
-          height={"60px"}
-        />
-        <div className="chat-list-box_spans">
-          <span className="chat-list-box_header">{userData.name}</span>
-          <span className="chat-list-box_msg">{userData.lastMassage}</span>
+      {({ isActive }) => (
+        <div
+          style={
+            isActive
+              ? {
+                  backgroundColor: "rgba(55, 61, 70, 1)",
+                }
+              : {}
+          }
+          className="chat-list-box"
+        >
+          <img
+            className="chat-list-box_user-photo"
+            src={userData.photoUrl}
+            alt="User_photo"
+            width={"60px"}
+            height={"60px"}
+          />
+          <div className="chat-list-box_spans">
+            <span className="chat-list-box_header">{userData.name}</span>
+            <span className="chat-list-box_msg">{userData.lastMassage}</span>
+          </div>
+          <div className="grow"></div>
+          <span className="chat-list-box_date">{userData.date}</span>
         </div>
-        <div className="grow"></div>
-        <span className="chat-list-box_date">{userData.date}</span>
-      </div>
+      )}
     </NavLink>
   );
 };

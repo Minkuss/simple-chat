@@ -4,6 +4,8 @@
   width: 100%;
   height: 50px;
   border-radius: 5px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
   border: none;
   &::placeholder {
     padding-left: 10px;
