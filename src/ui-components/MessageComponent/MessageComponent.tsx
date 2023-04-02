@@ -2,22 +2,22 @@ import { Card, H2, Label } from "@blueprintjs/core";
 import { getDoc } from "firebase/firestore";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { IMassage, IUser } from "../../types";
+import { IMessage, IUser } from "../../types";
 import "./MessageComponent.scss";
 
-interface IMassageComponent {
-  massage: IMassage;
+interface IMessageComponent {
+  message: IMessage;
 }
 
-export const MassageComponent: FC<IMassageComponent> = (props) => {
+export const MessageComponent: FC<IMessageComponent> = (props) => {
   const user = useAuth();
 
-  const { massage }: IMassageComponent = { ...defaultProps, ...props };
-  const massageDate = new Date(massage.date.toMillis());
+  const { message }: IMessageComponent = { ...defaultProps, ...props };
+  const messageDate = new Date(message.date.toMillis());
   const [sender, setSender] = useState<IUser>();
 
   const getSender = useCallback(async () => {
-    const sender: any = (await getDoc(massage.sender)).data();
+    const sender: any = (await getDoc(message.sender)).data();
     setSender(sender);
   }, []);
 
@@ -33,21 +33,21 @@ export const MassageComponent: FC<IMassageComponent> = (props) => {
             ? { alignSelf: "flex-end" }
             : { alignSelf: "flex-start" }
         }
-        className="massage-card"
+        className="message-card"
       >
-        <span className="massage-card_content">{massage.content}</span>
-        <span className="massage-card_date">
-          {String(massageDate.getHours()) +
+        <span className="message-card_content">{message.content}</span>
+        <span className="message-card_date">
+          {String(messageDate.getHours()) +
             ":" +
-            String(massageDate.getMinutes()).padStart(2, "0")}
+            String(messageDate.getMinutes()).padStart(2, "0")}
         </span>
       </Card>
     </>
   );
 };
 
-const defaultProps: Required<IMassageComponent> = {
-  massage: {
+const defaultProps: Required<IMessageComponent> = {
+  message: {
     content: "",
     status: "",
     date: "",

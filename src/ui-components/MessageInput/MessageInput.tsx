@@ -2,16 +2,16 @@ import { InputGroup } from "@blueprintjs/core";
 import { FC, useState } from "react";
 import "./MessageInput.scss";
 
-interface IMassageInput {
+interface IMessageInput {
   onSubmit: (value: string) => unknown;
 }
 
-export const MassageInput: FC<IMassageInput> = (props) => {
-  const { onSubmit }: IMassageInput = { ...defaultProps, ...props };
+export const MessageInput: FC<IMessageInput> = (props) => {
+  const { onSubmit }: IMessageInput = { ...defaultProps, ...props };
   const [inputText, setInputText] = useState("");
 
   return (
-    <div className="massage-input">
+    <div className="message-input">
       <input
         onKeyDown={(key) => {
           if (key.key === "Enter") {
@@ -21,7 +21,7 @@ export const MassageInput: FC<IMassageInput> = (props) => {
         }}
         onChange={(e) => setInputText(e.target.value)}
         placeholder="Hello"
-        className="massage-input_input"
+        className="message-input_input"
         type="text"
         value={inputText}
       />
@@ -29,6 +29,6 @@ export const MassageInput: FC<IMassageInput> = (props) => {
   );
 };
 
-const defaultProps: Required<IMassageInput> = {
+const defaultProps: Required<IMessageInput> = {
   onSubmit: () => {},
 };

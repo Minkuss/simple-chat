@@ -1,5 +1,6 @@
 import { Card } from "@blueprintjs/core";
 import {
+  arrayUnion,
   collection,
   doc,
   DocumentReference,
@@ -10,13 +11,13 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { nanoid } from "nanoid";
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import { useAuth } from "../../hooks/useAuth";
 import { db } from "../../main";
-import { IChat, IMassage } from "../../types";
-import { MassageComponent, MassageInput } from "../../ui-components";
+import { IChat, IMessage } from "../../types";
+import { MessageComponent, MessageInput } from "../../ui-components";
 import { ChatHeader } from "../../ui-components/ChatHeader/ChatHeader";
 import "./ChatComponent.scss";
 
@@ -27,17 +28,20 @@ export const ChatComponent: FC = () => {
   const location = useLocation();
   const { interlocutorID } = location.state;
   const [chatData, setChatData] = useState<IChat>();
-  const [massageText, setMassageText] = useState("");
 
   useEffect(() => {
     if (user) {
       const doc2 = doc;
+      console.log("privet");
+      console.log(interlocutorID);
+
       onSnapshot(doc2(db, "users", user.uid), (doc) => {
         doc.data()?.chats.map(async (el: any) => {
           const chatData: any = (await getDoc(el)).data();
           onSnapshot(doc2(db, "chats", chatData.id), async (doc) => {
             // subscribing to chatData changes
             const chat: any = doc.data();
+            // getting initiator and interlocutor data objects
             const initiatorUser: any = await (
               await getDoc(chat.initiatorUser)
             ).data();
@@ -47,52 +51,101 @@ export const ChatComponent: FC = () => {
             const initiatorUserID = initiatorUser.id;
             const interlocutorUserID = interlocutorUser.id;
             if (
-              initiatorUserID === interlocutorID ||
-              interlocutorUserID === interlocutorID
+              // checking coincidences, interlocutorID is ID of user's interlocutor
+              (initiatorUserID === interlocutorID ||
+                interlocutorUserID === interlocutorID) &&
+              (initiatorUser.name === username ||
+                interlocutorUser.name === username)
             ) {
               setChatData(chat);
+              console.log(chat);
+            } else {
+              console.log(interlocutorUser.name);
+              setChatData(undefined); // if chat document doesn't exists => setting chatData's value to undefined
             }
           });
         });
       });
     }
-  }, [user]);
+  }, [user, username]);
 
-  useEffect(() => {
-    if (massageText !== "" && user) {
-      const doc2 = doc;
-      onSnapshot(doc2(db, "users", user.uid), (doc) => {
-        doc.data()?.chats.map(async (el: any) => {
-          const chatData: any = (await getDoc(el)).data();
-          const user: any = await (await getDoc(doc.ref)).data();
-          const newMassage: IMassage = {
-            content: massageText,
+  const addNewMessage = useCallback(
+    async (messageText: string) => {
+      if (messageText !== "" && user) {
+        const userRef = doc(db, "users", user.uid);
+        if (chatData) {
+          // set new message if chat exists
+          const newMessage: IMessage = {
+            content: messageText,
             date: new Date(),
             id: nanoid(),
-            sender: doc.ref,
+            sender: userRef,
             status: "unchecked",
           };
-          chatData.massages.push(newMassage);
-          await updateDoc(doc2(db, "chats", chatData.id), {
-            massages: chatData.massages,
+          chatData.messages.push(newMessage);
+          await setDoc(doc(db, "chats", chatData.id), {
+            id: chatData.id,
+            initiatorUser: chatData.initiatorUser,
+            interlocutorUser: chatData.interlocutorUser,
+            messages: chatData.messages,
           });
-        });
-      });
-    }
-  }, [massageText]);
+        } else {
+          // else create new chat with user's message
+          const messages: IMessage[] = [];
+          const newChatID = nanoid();
+
+          const newMessage: IMessage = {
+            content: messageText,
+            date: new Date(),
+            id: nanoid(),
+            sender: userRef,
+            status: "unchecked",
+          };
+          messages.push(newMessage);
+
+          const interlocutorRef: DocumentReference = doc(
+            db,
+            "users",
+            interlocutorID
+          );
+
+          await setDoc(doc(db, "chats", newChatID), {
+            // creating new chat document in collecrion 'chats'
+            id: newChatID,
+            initiatorUser: userRef,
+            interlocutorUser: interlocutorRef,
+            messages: messages,
+          });
+
+          const newChatRef: DocumentReference = doc(db, "chats", newChatID); // getting the reference of new chat
+
+          await updateDoc(doc(db, "users", user.uid), {
+            // updating chats list in user's document
+            chats: arrayUnion(newChatRef),
+          });
+
+          await updateDoc(doc(db, "users", interlocutorID), {
+            // updating chats list in interlocutor's document
+            chats: arrayUnion(newChatRef),
+          });
+        }
+      }
+    },
+    [user, chatData]
+  );
 
   return (
     <div className="chat-component">
       <ChatHeader userName={username || ""} />
-      <div className="chat-component_massages-list">
-        {chatData?.massages.map((massage) => (
-          <MassageComponent key={massage.id} massage={massage} />
+      <div className="chat-component_messages-list">
+        {chatData?.messages.map((message) => (
+          <MessageComponent key={message.id} message={message} />
         ))}
       </div>
       <div className="grow"></div>
-      <MassageInput
+      <MessageInput
         onSubmit={(value) => {
-          setMassageText(value);
+          addNewMessage(value);
         }}
       />
     </div>

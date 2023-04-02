@@ -8,12 +8,13 @@ export interface IUser {
 }
 
 export interface IChat {
-  users: IUser[];
-  massages: IMassage[]
-  id: string
+  initiatorUser: DocumentReference;
+  interlocutorUser: DocumentReference;
+  messages: IMessage[];
+  id: string;
 }
 
-export interface IMassage {
+export interface IMessage {
   content: string;
   status: string;
   date: any;

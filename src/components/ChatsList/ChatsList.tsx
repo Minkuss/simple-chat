@@ -32,13 +32,6 @@ export const ChatsList: FC = () => {
 
   const usersDataSnap = getUsersData();
 
-  const getChatsData = useCallback(async () => {
-    const querySnapshot = await getDocs(collection(db, "chats"));
-    return querySnapshot;
-  }, []);
-
-  const chatsDataSnap = getChatsData();
-
   useEffect(() => {
     if (searchText.length > 0) {
       setOpen(true);
@@ -77,38 +70,68 @@ export const ChatsList: FC = () => {
             const interlocutorData: any = await (
               await getDoc(chat.interlocutorUser)
             ).data();
-            if (chat.massages.length !== 0) {
-              const lastMassageDate = new Date(
-                chat.massages[chat.massages.length - 1].date.toMillis()
+            const initiatorData: any = await (
+              await getDoc(chat.initiatorUser)
+            ).data();
+            if (chat.messages.length !== 0) {
+              const lastMessageDate = new Date(
+                chat.messages[chat.messages.length - 1].date.toMillis()
               );
-              const newChats: DocumentData[] = [
-                ...userData,
-                {
-                  photoUrl: interlocutorData.photoUrl,
-                  name: interlocutorData.name,
-                  lastMassage: chat.massages[chat.massages.length - 1].content,
-                  chatID: chat.id,
-                  interlocutorID: interlocutorData.id,
-                  date:
-                    String(lastMassageDate.getHours()) +
-                    ":" +
-                    String(lastMassageDate.getMinutes()).padStart(2, "0"),
-                },
-              ];
-              setUserData(newChats);
+              setUserData((prevState) => {
+                const newChats: DocumentData[] = [
+                  ...prevState,
+                  interlocutorData.id !== userID
+                    ? {
+                        photoUrl: interlocutorData.photoUrl,
+                        name: interlocutorData.name,
+                        lastMessage:
+                          chat.messages[chat.messages.length - 1].content,
+                        chatID: chat.id,
+                        id: interlocutorData.id,
+                        date:
+                          String(lastMessageDate.getHours()) +
+                          ":" +
+                          String(lastMessageDate.getMinutes()).padStart(2, "0"),
+                      }
+                    : {
+                        photoUrl: initiatorData.photoUrl,
+                        name: initiatorData.name,
+                        lastMessage:
+                          chat.messages[chat.messages.length - 1].content,
+                        chatID: chat.id,
+                        id: initiatorData.id,
+                        date:
+                          String(lastMessageDate.getHours()) +
+                          ":" +
+                          String(lastMessageDate.getMinutes()).padStart(2, "0"),
+                      },
+                ];
+                return newChats;
+              });
             } else {
-              const newChats: DocumentData[] = [
-                ...userData,
-                {
-                  photoUrl: interlocutorData.photoUrl,
-                  name: interlocutorData.name,
-                  lastMassage: "",
-                  chatID: chat.id,
-                  interlocutorID: interlocutorData.id,
-                  date: "",
-                },
-              ];
-              setUserData(newChats);
+              setUserData((prevState) => {
+                const newChats: DocumentData[] = [
+                  ...prevState,
+                  interlocutorData.id !== userID
+                    ? {
+                        photoUrl: interlocutorData.photoUrl,
+                        name: interlocutorData.name,
+                        lastMessage: "",
+                        chatID: chat.id,
+                        id: interlocutorData.id,
+                        date: "",
+                      }
+                    : {
+                        photoUrl: initiatorData.photoUrl,
+                        name: initiatorData.name,
+                        lastMessage: "",
+                        chatID: chat.id,
+                        id: initiatorData.id,
+                        date: "",
+                      },
+                ];
+                return newChats;
+              });
             }
           });
         });
