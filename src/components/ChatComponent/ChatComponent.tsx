@@ -45,9 +45,11 @@ export const ChatComponent: FC = () => {
             const initiatorUser: any = await (
               await getDoc(chat.initiatorUser)
             ).data();
+            console.log(initiatorUser);
             const interlocutorUser: any = await (
               await getDoc(chat.interlocutorUser)
             ).data();
+            console.log(interlocutorUser);
             const initiatorUserID = initiatorUser.id;
             const interlocutorUserID = interlocutorUser.id;
             if (
@@ -59,13 +61,11 @@ export const ChatComponent: FC = () => {
             ) {
               setChatData(chat);
               console.log(chat);
-            } else {
-              console.log(interlocutorUser.name);
-              setChatData(undefined); // if chat document doesn't exists => setting chatData's value to undefined
             }
           });
         });
       });
+      setChatData(undefined);
     }
   }, [user, username]);
 
