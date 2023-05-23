@@ -32,8 +32,6 @@ export const ChatComponent: FC = () => {
   useEffect(() => {
     if (user) {
       const doc2 = doc;
-      console.log("privet");
-      console.log(interlocutorID);
 
       onSnapshot(doc2(db, "users", user.uid), (doc) => {
         doc.data()?.chats.map(async (el: any) => {
@@ -45,11 +43,9 @@ export const ChatComponent: FC = () => {
             const initiatorUser: any = await (
               await getDoc(chat.initiatorUser)
             ).data();
-            console.log(initiatorUser);
             const interlocutorUser: any = await (
               await getDoc(chat.interlocutorUser)
             ).data();
-            console.log(interlocutorUser);
             const initiatorUserID = initiatorUser.id;
             const interlocutorUserID = interlocutorUser.id;
             if (
@@ -60,7 +56,6 @@ export const ChatComponent: FC = () => {
                 interlocutorUser.name === username)
             ) {
               setChatData(chat);
-              console.log(chat);
             }
           });
         });

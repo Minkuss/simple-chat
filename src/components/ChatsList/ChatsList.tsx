@@ -65,6 +65,7 @@ export const ChatsList: FC = () => {
         doc.data()?.chats.map(async (el: any) => {
           const chatData: any = (await getDoc(el)).data();
           onSnapshot(doc2(db, "chats", chatData.id), async (doc) => {
+            console.log("chat");
             // subscribing to chatData changes
             const chat: any = doc.data();
             const interlocutorData: any = await (
