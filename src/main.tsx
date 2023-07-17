@@ -10,7 +10,7 @@ import { AuthContext } from "./context/authContext";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDxCBGKipihjYwmMoWiPtr7fgevla-829E",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "simple-chat-469c4.firebaseapp.com",
   projectId: "simple-chat-469c4",
   storageBucket: "simple-chat-469c4.appspot.com",
