@@ -15,10 +15,11 @@ import { AuthContext } from "../../context/authContext";
 import { db } from "../../main";
 import { ChatListButton, SearchComponent } from "../../ui-components";
 import "./ChatsList.scss";
+import { auth } from "../../main";
+import { useUserID } from "../../hooks/use-userID";
 
 export const ChatsList: FC = () => {
-  const auth = useContext(AuthContext).auth;
-  const userID = auth.currentUser?.uid;
+  const userID = useUserID();
 
   const [searchText, setSearchText] = useState("");
   const [result, setResult] = useState<DocumentData[]>([]);
@@ -58,22 +59,18 @@ export const ChatsList: FC = () => {
     }
   }, [searchText]);
 
-  const getUserData = useCallback(async () => {
-    const docSnap = await getDoc(doc(db, "users", userID || ""));
-    if (docSnap.exists()) {
-      const dataSnap = docSnap.data();
-      return dataSnap.chats;
-    } else {
-      console.log("Error, no such document");
-    }
-  }, [userID]);
-
   const getUserChatsData = useCallback(() => {
-    const chatsSnap = getUserData();
-    chatsSnap.then((chatsList) => {
-      chatsList.forEach(async (chatReference: any) => {
+    const doc2 = doc;
+    if (!userID) {
+      return;
+    }
+    onSnapshot(doc2(db, "users", userID), (doc) => {
+      const userData: any = doc.data();
+      const userChats = userData.chats;
+
+      userChats.forEach(async (chatReference: any) => {
         const chatData: any = (await getDoc(chatReference)).data();
-        onSnapshot(doc(db, "chats", chatData.id), async (doc) => {
+        onSnapshot(doc2(db, "chats", chatData.id), async (doc) => {
           const chatData: any = doc.data();
           const interlocutorData: any = (
             await getDoc(chatData.interlocutorUser)
@@ -133,7 +130,9 @@ export const ChatsList: FC = () => {
   }, [userID]);
 
   useEffect(() => {
-    getUserChatsData();
+    if (userID) {
+      getUserChatsData();
+    }
   }, [userID]);
 
   return (
