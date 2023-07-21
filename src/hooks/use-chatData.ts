@@ -1,12 +1,18 @@
 import { doc, DocumentData, getDoc, onSnapshot } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { db } from "../main";
+import { IMessage, IUser } from "../types";
 import { useUserID } from "./use-userID";
 
 export function useChatData() {
   const userID = useUserID();
   const [userData, setUserData] = useState<DocumentData[]>([]);
 
+  const uncheckedMsgCounter = useCallback((chatData: any) => {
+    return chatData.messages.filter((message: IMessage) => 
+      message.sender.path !== `users/${userID}` && message.status === "unchecked"
+    )
+  }, [userID])
 
   useEffect(() => {
     const doc2 = doc;
@@ -49,6 +55,7 @@ export function useChatData() {
                   ":" +
                   String(lastMessageDate.getMinutes()).padStart(2, "0")
                 : "",
+            uncheckedMsgCount: uncheckedMsgCounter(chatData).length
           };
           setUserData((prevState) => {
             prevState.forEach((el: DocumentData) => {
@@ -62,6 +69,7 @@ export function useChatData() {
                   chatID: "",
                   id: "",
                   date: "",
+                  uncheckedMsgCount: 0,
                 };
               }
             });

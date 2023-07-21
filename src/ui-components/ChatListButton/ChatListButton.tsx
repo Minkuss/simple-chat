@@ -45,6 +45,11 @@ export const ChatListButton: FC<IChatListButton> = (props) => {
           </div>
           <div className="grow"></div>
           <span className="chat-list-box_date">{userData.date}</span>
+          {userData.uncheckedMsgCount !== 0 ? (
+            <span className="chat-list-box_unchecked-counter">
+              {userData.uncheckedMsgCount}
+            </span>
+          ) : null}
         </div>
       )}
     </NavLink>
