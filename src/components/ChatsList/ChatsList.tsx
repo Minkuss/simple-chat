@@ -1,12 +1,12 @@
 import { FC, useState } from "react";
 import { ChatListButton, SearchComponent } from "../../ui-components";
 import "./ChatsList.scss";
-import { useChatData } from "../../hooks/use-chatData";
+import { useChatListData } from "../../hooks/use-chatListData";
 import { useUsersSearch } from "../../hooks/use_users-search";
 
 export const ChatsList: FC = () => {
   const [searchText, setSearchText] = useState("");
-  const userData = useChatData();
+  const userData = useChatListData();
   const usersSearchData = useUsersSearch(searchText);
 
   return (

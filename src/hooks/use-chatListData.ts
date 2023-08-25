@@ -4,7 +4,7 @@ import { db } from "../main";
 import { IMessage, IUser } from "../types";
 import { useUserID } from "./use-userID";
 
-export function useChatData() {
+export function useChatListData() {
   const userID = useUserID();
   const [userData, setUserData] = useState<DocumentData[]>([]);
 
