@@ -6,11 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import { db } from "../../main";
 import "./LoginPage.scss";
+import { useAuthStatus } from "../../hooks/use-auth-status";
 
 export const LoginPage: FC = () => {
   const auth = useContext(AuthContext).auth;
   const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
+  const authStatus = useAuthStatus();
 
   const getData = async (id: string) => {
     const docRef = doc(db, "users", id);
@@ -65,6 +67,13 @@ export const LoginPage: FC = () => {
         console.log(errorMessage);
       });
   };
+
+  useEffect(() => {
+    if (authStatus === "authenticated") {
+      console.log("its ok");
+      navigate("/main");
+    }
+  }, [authStatus]);
 
   return (
     <div className="container">
