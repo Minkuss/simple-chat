@@ -86,7 +86,7 @@ export function useChatComponentData(username: string | undefined, interlocutorI
           );
 
           await setDoc(doc(db, "chats", newChatID), {
-            // creating new chat document in collecrion 'chats'
+            // creating new chat document in collection 'chats'
             id: newChatID,
             initiatorUser: userRef,
             interlocutorUser: interlocutorRef,
