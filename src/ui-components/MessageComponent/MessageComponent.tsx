@@ -1,5 +1,5 @@
 import { Card, H2, Label } from "@blueprintjs/core";
-import { getDoc } from "firebase/firestore";
+import { DocumentReference, Firestore, getDoc } from "firebase/firestore";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { IMessage, IUser } from "../../types";
@@ -51,7 +51,7 @@ const defaultProps: Required<IMessageComponent> = {
     content: "",
     status: "",
     date: "",
+    sender: {},
     id: "",
-    sender: { name: "", email: "", id: "", chats: [] },
   },
 };
