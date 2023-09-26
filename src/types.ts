@@ -18,6 +18,6 @@ export interface IMessage {
   content: string;
   status: string;
   date: any;
-  sender: DocumentReference<unknown>;
+  sender: any;
   id: string
 }
